@@ -43,8 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConsolePrinter.cs" />
-    <Compile Include="IConsolePrinter.cs" />
     <Compile Include="IRESTClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RESTClient.cs" />
