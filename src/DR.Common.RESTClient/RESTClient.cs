@@ -24,7 +24,10 @@ namespace DR.Common.RESTClient
         public string Request(string method, string url, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false)
         {
             url = BaseURL.TrimEnd('/') + url;
-            return ReadResponse(RequestData(method, url, credential, headers, useDefaultCredentials));
+            using (var resp = RequestData(method, url, credential, headers, useDefaultCredentials))
+            {
+                return ReadResponse(resp);
+            }
         }
 
         public T Request<T>(string method, string url, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false) where T : class
@@ -35,7 +38,10 @@ namespace DR.Common.RESTClient
         public string Request(string method, string url, object o, WebHeaderCollection headers = null)
         {
             url = BaseURL.TrimEnd('/') + url;
-            return ReadResponse(SendData(method, url, o, headers));
+            using (var resp = SendData(method, url, o, headers))
+            {
+                return ReadResponse(resp);
+            }
         }
 
         public T Request<T>(string method, string url, object o, WebHeaderCollection headers = null) where T : class
