@@ -103,7 +103,16 @@ namespace DR.Common.RESTClient
                 req.Method = method;
                 req.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
                 if (headers != null)
-                    req.Headers.Add(headers);
+                {
+                    foreach (var key in headers.AllKeys)
+                    {
+                        var val = headers[key];
+                        if (key == "Host")
+                            req.Host = val;
+                        else
+                            req.Headers.Add(key, val);
+                    }
+                }
                 if (!string.IsNullOrEmpty(Username))
                     req.Headers.Add("X-MU-Username", Username);
                 req.ContentLength = data.Length;
