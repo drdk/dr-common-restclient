@@ -73,7 +73,16 @@ namespace DR.Common.RESTClient
                 req.Method = method.ToUpper();
                 req.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
                 if (headers != null)
-                    req.Headers.Add(headers);
+                {
+                    foreach (var key in headers.AllKeys)
+                    {
+                        var val = headers[key];
+                        if (key == "Host")
+                            req.Host = val;
+                        else
+                            req.Headers.Add(key, val);
+                    }
+                }
                 return req.GetResponse() as HttpWebResponse;
             }
             catch (Exception e)
