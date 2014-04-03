@@ -13,13 +13,24 @@ namespace DR.Common.RESTClient
         public RESTClient()
         {
             UseISODates = false;
-            BaseURL = "";
-            Username = null;
+            _baseUrl = "";
         }
 
-        public string BaseURL { get; set; }
+        private string _baseUrl;
+        public string BaseURL
+        {
+            get { return _baseUrl; }
+            set
+            {
+                Uri temp;
+                if (string.IsNullOrEmpty(value) || !Uri.TryCreate(value, UriKind.Absolute, out temp))
+                {
+                    throw new ArgumentException("Invalid service uri", "value");
+                }
+                _baseUrl = temp.ToString();
+            }
+        }
         public bool UseISODates { get; set; }
-        public string Username { get; set; }
 
         public string Request(string method, string url, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false)
         {
@@ -113,8 +124,6 @@ namespace DR.Common.RESTClient
                             req.Headers.Add(key, val);
                     }
                 }
-                if (!string.IsNullOrEmpty(Username))
-                    req.Headers.Add("X-MU-Username", Username);
                 req.ContentLength = data.Length;
                 req.ContentType = "application/x-www-form-urlencoded";
                 req.Accept = "application/json, text/javascript, */*; q=0.01";

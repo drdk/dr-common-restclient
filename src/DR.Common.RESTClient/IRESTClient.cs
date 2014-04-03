@@ -23,6 +23,5 @@ namespace DR.Common.RESTClient
 
         bool UseISODates { get; set; }
         string BaseURL { get; set; }
-        string Username { get; set; }
     }
 }
