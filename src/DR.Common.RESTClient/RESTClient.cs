@@ -105,8 +105,20 @@ namespace DR.Common.RESTClient
 
         private HttpWebResponse SendData(string method, string url, object o, WebHeaderCollection headers)
         {
-            var json = SerializeObject(o);
-            var data = (new UTF8Encoding(encoderShouldEmitUTF8Identifier: false)).GetBytes(json);
+            byte[] data = null;
+            if (o.GetType().BaseType == typeof (Stream))
+            {
+                using (var memStream = new MemoryStream())
+                {
+                    ((Stream)o).CopyTo(memStream);
+                    data = memStream.ToArray();
+                }
+            }
+            else
+            {
+                var json = SerializeObject(o);
+                data = (new UTF8Encoding(encoderShouldEmitUTF8Identifier: false)).GetBytes(json);
+            }
 
             try
             {
