@@ -106,7 +106,7 @@ namespace DR.Common.RESTClient
         private HttpWebResponse SendData(string method, string url, object o, WebHeaderCollection headers)
         {
             byte[] data = null;
-            if (o.GetType().BaseType == typeof(Stream) || o.GetType() == typeof(Stream))
+            if (o != null && (o.GetType().BaseType == typeof(Stream) || o.GetType() == typeof(Stream)))
             {
                 using (var memStream = new MemoryStream())
                 {
