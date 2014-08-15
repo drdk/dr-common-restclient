@@ -63,7 +63,7 @@ namespace DR.Common.RESTClient
         public string Get(string url, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false) { return Request("GET", url, credential, headers, useDefaultCredentials); }
         public T Get<T>(string url, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false) where T : class { return Request<T>("GET", url, credential, headers, useDefaultCredentials); }
 
-        public string Delete(string url, WebHeaderCollection headers = null) { return Request("DELETE", url, headers); }
+        public string Delete(string url, WebHeaderCollection headers = null) { return Request("DELETE", url, headers : headers); }
         public T Delete<T>(string url, WebHeaderCollection headers = null) where T : class { return Request<T>("DELETE", url, headers); }
 
         public string Post(string url, object o, WebHeaderCollection headers = null) { return Request("POST", url, o, headers); }
@@ -106,7 +106,7 @@ namespace DR.Common.RESTClient
         private HttpWebResponse SendData(string method, string url, object o, WebHeaderCollection headers)
         {
             byte[] data = null;
-            if (o.GetType().BaseType == typeof(Stream) || o.GetType() == typeof(Stream))
+            if (o != null && (o.GetType().BaseType == typeof(Stream) || o.GetType() == typeof(Stream)))
             {
                 using (var memStream = new MemoryStream())
                 {
