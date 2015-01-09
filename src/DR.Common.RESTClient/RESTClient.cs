@@ -13,6 +13,8 @@ namespace DR.Common.RESTClient
         public RESTClient()
         {
             UseISODates = false;
+            ContentType = "application/x-www-form-urlencoded";
+
             _baseUrl = "";
         }
 
@@ -30,7 +32,9 @@ namespace DR.Common.RESTClient
                 _baseUrl = temp.ToString();
             }
         }
+
         public bool UseISODates { get; set; }
+        public string ContentType { get; set; }
 
         public string Request(string method, string url, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false)
         {
@@ -137,7 +141,7 @@ namespace DR.Common.RESTClient
                     }
                 }
                 req.ContentLength = data.Length;
-                req.ContentType = "application/x-www-form-urlencoded";
+                req.ContentType = ContentType;
                 req.Accept = "application/json, text/javascript, */*; q=0.01";
 
                 var s = req.GetRequestStream();
