@@ -6,10 +6,12 @@ namespace DR.Common.RESTClient
     public class RESTClientException : Exception
     {
         public HttpStatusCode? StatusCode;
-        public string StatusDescription;
-        public string Content;
-        public string Uri;
+        public string StatusDescription { get; private set; }
+        public string Content{ get; private set; }
+        public string Uri{ get; private set; }
 
+        private readonly string _message;
+        public override string Message { get { return _message; } }
         public RESTClientException(string url, Exception exception)
             : base(exception.Message, exception)
         {
@@ -36,12 +38,16 @@ namespace DR.Common.RESTClient
 
                 StatusCode = response.StatusCode;
                 StatusDescription = response.StatusDescription;
+                _message = (!string.IsNullOrEmpty(StatusDescription) && !string.IsNullOrEmpty(Uri) ?
+                    StatusDescription + " Uri : \"" + Uri + "\". Inner message : \"" + exception.Message + "\"" :
+                    exception.Message);
             }
             else
             {
                 StatusCode = null;
-                StatusDescription = Message;
+                StatusDescription = null;
                 Content = NO_CONTENT;
+                _message = exception.Message;
             }
         }
 
