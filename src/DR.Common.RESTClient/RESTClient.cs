@@ -76,24 +76,11 @@ namespace DR.Common.RESTClient
         {
             try
             {
-                var req = HttpWebRequest.Create(url) as HttpWebRequest;
+                var req = PrepareHttpWebRequest(url, method, headers);
 
                 req.UseDefaultCredentials = useDefaultCredentials;
                 if (credential != null) req.Credentials = credential;
 
-                req.Method = method.ToUpper();
-                req.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
-                if (headers != null)
-                {
-                    foreach (var key in headers.AllKeys)
-                    {
-                        var val = headers[key];
-                        if (key == "Host")
-                            req.Host = val;
-                        else
-                            req.Headers.Add(key, val);
-                    }
-                }
                 return req.GetResponse() as HttpWebResponse;
             }
             catch (Exception e)
@@ -105,7 +92,7 @@ namespace DR.Common.RESTClient
 
         private HttpWebResponse SendData(string method, string url, object o, WebHeaderCollection headers)
         {
-            byte[] data = null;
+            byte[] data;
             if (o != null && (o.GetType().BaseType == typeof(Stream) || o.GetType() == typeof(Stream)))
             {
                 using (var memStream = new MemoryStream())
@@ -122,20 +109,8 @@ namespace DR.Common.RESTClient
 
             try
             {
-                var req = WebRequest.Create(url) as HttpWebRequest;
-                req.Method = method;
-                req.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
-                if (headers != null)
-                {
-                    foreach (var key in headers.AllKeys)
-                    {
-                        var val = headers[key];
-                        if (key == "Host")
-                            req.Host = val;
-                        else
-                            req.Headers.Add(key, val);
-                    }
-                }
+                var req = PrepareHttpWebRequest(url, method, headers);
+
                 req.ContentLength = data.Length;
                 req.ContentType = "application/x-www-form-urlencoded";
                 req.Accept = "application/json, text/javascript, */*; q=0.01";
@@ -150,6 +125,27 @@ namespace DR.Common.RESTClient
             {
                 throw new RESTClientException(url, e);
             }
+        }
+
+        private HttpWebRequest PrepareHttpWebRequest(string url, string method, WebHeaderCollection headers)
+        {
+            var req = HttpWebRequest.Create(url) as HttpWebRequest;
+
+            req.Method = method.ToUpper();
+            req.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+            if (headers != null)
+            {
+                foreach (var key in headers.AllKeys)
+                {
+                    var val = headers[key];
+                    if (key == "Host")
+                        req.Host = val;
+                    else
+                        req.Headers.Add(key, val);
+                }
+            }
+
+            return req;
         }
 
         private T DeserializeObject<T>(string s)
