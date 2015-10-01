@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Net.Cache;
 using System.Text;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -13,6 +14,8 @@ namespace DR.Common.RESTClient
         public RESTClient()
         {
             UseISODates = false;
+            ContentType = "application/x-www-form-urlencoded";
+
             _baseUrl = "";
         }
 
@@ -30,7 +33,9 @@ namespace DR.Common.RESTClient
                 _baseUrl = temp.ToString();
             }
         }
+
         public bool UseISODates { get; set; }
+        public string ContentType { get; set; }
 
         public string Request(string method, string url, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false)
         {
@@ -43,7 +48,8 @@ namespace DR.Common.RESTClient
 
         public T Request<T>(string method, string url, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false) where T : class
         {
-            return DeserializeObject<T>(Request(method, url, credential, headers, useDefaultCredentials));
+            string response = Request(method, url, credential, headers, useDefaultCredentials);
+            return DeserializeObject<T>(response);
         }
 
         public string Request(string method, string url, object o, WebHeaderCollection headers = null)
@@ -61,7 +67,12 @@ namespace DR.Common.RESTClient
         }
 
         public string Get(string url, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false) { return Request("GET", url, credential, headers, useDefaultCredentials); }
-        public T Get<T>(string url, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false) where T : class { return Request<T>("GET", url, credential, headers, useDefaultCredentials); }
+
+        public T Get<T>(string url, NetworkCredential credential = null, WebHeaderCollection headers = null,
+            bool useDefaultCredentials = false) where T : class
+        {
+            return Request<T>("GET", url, credential, headers, useDefaultCredentials);
+        }
 
         public string Delete(string url, WebHeaderCollection headers = null) { return Request("DELETE", url, headers : headers); }
         public T Delete<T>(string url, WebHeaderCollection headers = null) where T : class { return Request<T>("DELETE", url, headers); }
@@ -112,7 +123,7 @@ namespace DR.Common.RESTClient
                 var req = PrepareHttpWebRequest(url, method, headers);
 
                 req.ContentLength = data.Length;
-                req.ContentType = "application/x-www-form-urlencoded";
+                req.ContentType = ContentType;
                 req.Accept = "application/json, text/javascript, */*; q=0.01";
 
                 var s = req.GetRequestStream();
@@ -150,7 +161,16 @@ namespace DR.Common.RESTClient
 
         private T DeserializeObject<T>(string s)
         {
-            return UseISODates ? JsonConvert.DeserializeObject<T>(s, new IsoDateTimeConverter()) : JsonConvert.DeserializeObject<T>(s);
+            try
+            {
+                return UseISODates
+                    ? JsonConvert.DeserializeObject<T>(s, new IsoDateTimeConverter())
+                    : JsonConvert.DeserializeObject<T>(s);
+            }
+            catch (JsonSerializationException e)
+            {
+                throw new RESTSerializationException(s, e.Message, e);
+            }
         }
 
         private string SerializeObject(object o)
