@@ -90,7 +90,11 @@ namespace DR.Common.RESTClient
                 var req = PrepareHttpWebRequest(url, method, headers);
 
                 req.UseDefaultCredentials = useDefaultCredentials;
-                if (credential != null) req.Credentials = credential;
+                if (credential != null)
+                {
+                    req.Credentials = credential;
+                    req.PreAuthenticate = true;
+                }
 
                 return req.GetResponse() as HttpWebResponse;
             }
