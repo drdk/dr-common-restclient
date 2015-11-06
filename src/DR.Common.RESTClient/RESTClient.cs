@@ -171,9 +171,9 @@ namespace DR.Common.RESTClient
                     ? JsonConvert.DeserializeObject<T>(s, new IsoDateTimeConverter())
                     : JsonConvert.DeserializeObject<T>(s);
             }
-            catch (JsonSerializationException e)
+            catch (JsonException e)
             {
-                throw new RESTSerializationException(s, e.Message, e);
+                throw new RESTJsonException(s, e.Message, e);
             }
         }
 
