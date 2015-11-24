@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace DR.Common.RESTClient
 {
-    public class RESTJsonException : JsonException
+    public class RESTJsonException : Exception
     {
         public string Json { get; set; }
 
