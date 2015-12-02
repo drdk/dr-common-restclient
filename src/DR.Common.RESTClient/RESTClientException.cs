@@ -6,7 +6,7 @@ namespace DR.Common.RESTClient
 {
     public class RESTClientException : Exception
     {
-        public virtual HttpStatusCode? StatusCode { get; set; }
+        public virtual HttpStatusCode? StatusCode { get; private set; }
         public virtual string StatusDescription { get; private set; }
         public virtual string Content { get; private set; }
         public string Uri { get; private set; }
@@ -14,7 +14,11 @@ namespace DR.Common.RESTClient
         private readonly string _message;
         public override string Message { get { return _message; } }
 
-        public RESTClientException() { }
+        public RESTClientException(string url=null, HttpStatusCode? statusCode = null)
+        {
+            Uri = url;
+            StatusCode = statusCode;
+        }
 
         public RESTClientException(string url, Exception exception)
             : base(exception.Message, exception)
