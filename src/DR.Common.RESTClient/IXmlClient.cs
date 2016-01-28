@@ -2,7 +2,7 @@
 
 namespace DR.Common.RESTClient
 {
-    public interface IRESTClient
+    public interface IXmlClient
     {
         string Request(string method, string url, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false);
         T Request<T>(string method, string url, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false) where T : class;
@@ -20,9 +20,6 @@ namespace DR.Common.RESTClient
 
         string Put(string url, object o, WebHeaderCollection headers = null);
         T Put<T>(string url, object o, WebHeaderCollection headers = null) where T : class;
-
-        bool UseISODates { get; set; }
         string BaseURL { get; set; }
-        string ContentType { get; set; }
     }
 }

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Net;
-using Newtonsoft.Json;
 
 namespace DR.Common.RESTClient
 {
-    public class RESTClientException : Exception
+    public class RESTClientException: Exception
     {
         public virtual HttpStatusCode? StatusCode { get; private set; }
         public virtual string StatusDescription { get; private set; }
@@ -39,7 +38,7 @@ namespace DR.Common.RESTClient
             {
                 try
                 {
-                    Content = RESTClient.ReadResponse(response);
+                    Content = JsonClient.ReadResponse(response);
                 }
                 catch
                 {
@@ -60,12 +59,12 @@ namespace DR.Common.RESTClient
                 _message = exception.Message;
             }
         }
-
+/*
         public T DeserializeContent<T>(params JsonConverter[] jsonConverters)
         {
             return JsonConvert.DeserializeObject<T>(Content, jsonConverters);
         }
-
+*/
         private static string NO_CONTENT = "[[ unknown (this message is from RESTClientException, not actual content) ]]";
     }
 }
