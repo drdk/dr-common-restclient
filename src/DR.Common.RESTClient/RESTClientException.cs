@@ -38,7 +38,7 @@ namespace DR.Common.RESTClient
             {
                 try
                 {
-                    Content = JsonClient.ReadResponse(response);
+                    Content = RESTClient.ReadResponse(response);
                 }
                 catch
                 {
@@ -59,12 +59,7 @@ namespace DR.Common.RESTClient
                 _message = exception.Message;
             }
         }
-/*
-        public T DeserializeContent<T>(params JsonConverter[] jsonConverters)
-        {
-            return JsonConvert.DeserializeObject<T>(Content, jsonConverters);
-        }
-*/
+
         private static string NO_CONTENT = "[[ unknown (this message is from RESTClientException, not actual content) ]]";
     }
 }
