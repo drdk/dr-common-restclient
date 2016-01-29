@@ -1,28 +1,32 @@
-﻿using System;
-using System.Net;
+﻿using System.IO;
+using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace DR.Common.RESTClient
 {
     public class XmlClient : RESTClient, IXmlClient
     {
-        public override T DeserializeContent<T>(RESTClientException exception)
+        public XmlClient()
         {
-            throw new NotImplementedException();
+            ContentType = "application/xml";
+            Accept = "application/xml, text/xml, */*; q=0.01";
+        }
+        public override T DeserializeObject<T>(string s)
+        {
+            var xs = new XmlSerializer(typeof(T));
+            using (var sr = new StringReader(s))
+                return (T) xs.Deserialize(sr);
         }
 
-        protected override HttpWebResponse RequestData(string method, string url, NetworkCredential credential, WebHeaderCollection headers, bool useDefaultCredentials)
+        protected override string SerializeObject(object o)
         {
-            throw new NotImplementedException();
-        }
-
-        protected override HttpWebResponse SendData(string method, string url, object o, WebHeaderCollection headers)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override T DeserializeObject<T>(string s)
-        {
-            throw new NotImplementedException();
+            var xs = new XmlSerializer(o.GetType());
+            using (var sw = new StringWriter())
+            {
+                xs.Serialize(sw, o);
+                return sw.ToString();
+            }
         }
     }
 }

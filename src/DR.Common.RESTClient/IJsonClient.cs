@@ -22,5 +22,6 @@ namespace DR.Common.RESTClient
         T Put<T>(string url, object o, WebHeaderCollection headers = null) where T : class;
         string BaseURL { get; set; }
         T DeserializeContent<T>(RESTClientException exception);
+        T DeserializeObject<T>(string s);
     }
 }

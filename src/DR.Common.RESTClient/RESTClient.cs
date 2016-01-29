@@ -66,13 +66,72 @@ namespace DR.Common.RESTClient
         {
             return Request<T>("PUT", url, o, headers);
         }
-        public abstract T DeserializeContent<T>(RESTClientException exception);
+        public T DeserializeContent<T>(RESTClientException exception)
+        {
+            return DeserializeObject<T>(exception.Content);
+        }
+        public abstract T DeserializeObject<T>(string s);
 
-        protected abstract HttpWebResponse RequestData(string method, string url, NetworkCredential credential, WebHeaderCollection headers, bool useDefaultCredentials);
-        protected abstract HttpWebResponse SendData(string method, string url, object o, WebHeaderCollection headers);
+        protected abstract string SerializeObject(object o);
 
-        protected abstract T DeserializeObject<T>(string s);
+        private HttpWebResponse RequestData(string method, string url, NetworkCredential credential, WebHeaderCollection headers, bool useDefaultCredentials)
+        {
+            try
+            {
+                var req = PrepareHttpWebRequest(url, method, headers);
 
+                req.UseDefaultCredentials = useDefaultCredentials;
+                if (credential != null)
+                {
+                    req.Credentials = credential;
+                    req.PreAuthenticate = true;
+                }
+
+                return req.GetResponse() as HttpWebResponse;
+            }
+            catch (Exception e)
+            {
+                throw new RESTClientException(url, e);
+            }
+
+        }
+        protected HttpWebResponse SendData(string method, string url, object o, WebHeaderCollection headers)
+        {
+            byte[] data;
+            if (o != null && (o.GetType().BaseType == typeof(Stream) || o.GetType() == typeof(Stream)))
+            {
+                using (var memStream = new MemoryStream())
+                {
+                    ((Stream)o).CopyTo(memStream);
+                    data = memStream.ToArray();
+                }
+            }
+            else
+            {
+                var text = SerializeObject(o);
+                data = (new UTF8Encoding(encoderShouldEmitUTF8Identifier: false)).GetBytes(text);
+            }
+
+            try
+            {
+                var req = PrepareHttpWebRequest(url, method, headers);
+
+                req.ContentLength = data.Length;
+                req.ContentType = ContentType;
+                req.Accept = Accept;
+
+                var s = req.GetRequestStream();
+                s.Write(data, 0, data.Length);
+                s.Close();
+
+                return req.GetResponse() as HttpWebResponse;
+            }
+            catch (Exception e)
+            {
+                throw new RESTClientException(url, e);
+            }
+        }
+        
         internal static string ReadResponse(HttpWebResponse response)
         {
             var stream = response.GetResponseStream();
@@ -130,5 +189,6 @@ namespace DR.Common.RESTClient
             }
         }
         protected string ContentType { get; set; }
+        protected string Accept { get; set; } 
     }
 }
