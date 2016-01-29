@@ -9,15 +9,17 @@ namespace DR.Common.RESTClient
 {
     public class JsonClient : RESTClient, IJsonClient
     {
-        public JsonClient()
+
+        public JsonClient() : this(false) { }
+        public JsonClient(bool useISODates)
         {
-            UseISODates = false;
+            _useISODates = useISODates;
             ContentType = "application/x-www-form-urlencoded";
 
             _baseUrl = "";
         }
 
-        private bool UseISODates { get; set; }
+        private bool _useISODates { get; set; }
 
         public override T DeserializeContent<T>(RESTClientException exception)
         {
@@ -87,7 +89,7 @@ namespace DR.Common.RESTClient
         {
             try
             {
-                return UseISODates
+                return _useISODates
                     ? JsonConvert.DeserializeObject<T>(s, new IsoDateTimeConverter())
                     : JsonConvert.DeserializeObject<T>(s);
             }
@@ -99,7 +101,7 @@ namespace DR.Common.RESTClient
 
         private string SerializeObject(object o)
         {
-            return UseISODates ? JsonConvert.SerializeObject(o, new IsoDateTimeConverter()) : JsonConvert.SerializeObject(o);
+            return _useISODates ? JsonConvert.SerializeObject(o, new IsoDateTimeConverter()) : JsonConvert.SerializeObject(o);
         }
     }
 }
