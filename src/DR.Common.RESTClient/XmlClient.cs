@@ -1,6 +1,4 @@
 ﻿using System.IO;
-using System.Text;
-using System.Xml;
 using System.Xml.Serialization;
 
 namespace DR.Common.RESTClient

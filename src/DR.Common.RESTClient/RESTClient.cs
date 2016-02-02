@@ -6,7 +6,7 @@ using System.Text;
 
 namespace DR.Common.RESTClient
 {
-    public abstract class RESTClient : IJsonClient, IXmlClient
+    public abstract class RESTClient : IRESTClient
     {
         public string Request(string method, string url, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false)
         {
