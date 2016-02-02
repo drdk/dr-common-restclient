@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace DR.Common.RESTClient
@@ -9,21 +10,26 @@ namespace DR.Common.RESTClient
         public JsonClient() : this(false) { }
         public JsonClient(bool useISODates)
         {
-            _useISODates = useISODates;
+            
             ContentType = "application/x-www-form-urlencoded";
             Accept = "application/json, text/javascript, */*; q=0.01";
             _baseUrl = "";
+            var jsonConverter = new List<JsonConverter>();
+
+            if (useISODates)
+                jsonConverter.Add(new IsoDateTimeConverter());
+
+            _jsonConverters = jsonConverter.ToArray();
+
         }
 
-        private bool _useISODates { get; set; }
+        private readonly JsonConverter[] _jsonConverters;
         
         public override T DeserializeObject<T>(string s)
         {
             try
             {
-                return _useISODates
-                    ? JsonConvert.DeserializeObject<T>(s, new IsoDateTimeConverter())
-                    : JsonConvert.DeserializeObject<T>(s);
+                return JsonConvert.DeserializeObject<T>(s, _jsonConverters);
             }
             catch (JsonException e)
             {
@@ -33,7 +39,7 @@ namespace DR.Common.RESTClient
 
         protected override string SerializeObject(object o)
         {
-            return _useISODates ? JsonConvert.SerializeObject(o, new IsoDateTimeConverter()) : JsonConvert.SerializeObject(o);
+            return JsonConvert.SerializeObject(o, _jsonConverters);
         }
     }
 }
