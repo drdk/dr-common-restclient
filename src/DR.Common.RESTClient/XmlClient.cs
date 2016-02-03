@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 using System.Xml.Serialization;
 
 namespace DR.Common.RESTClient
@@ -8,7 +9,8 @@ namespace DR.Common.RESTClient
         public XmlClient()
         {
             ContentType = "application/xml";
-            Accept = "application/xml, text/xml, */*; q=0.01";
+            //Accept = "application/xml, text/xml, */*; q=0.01";
+            Accept = "application/xml";
         }
         public override T DeserializeObject<T>(string s)
         {
@@ -20,11 +22,18 @@ namespace DR.Common.RESTClient
         protected override string SerializeObject(object o)
         {
             var xs = new XmlSerializer(o.GetType());
-            using (var sw = new StringWriter())
+
+            using (var sw = new Utf8StringWriter())
             {
                 xs.Serialize(sw, o);
                 return sw.ToString();
             }
         }
     }
+
+    public sealed class Utf8StringWriter : StringWriter
+    {
+        public override Encoding Encoding { get { return Encoding.UTF8; } }
+    }
+
 }
