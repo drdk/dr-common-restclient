@@ -86,6 +86,7 @@ namespace DR.Common.RESTClient
                     req.Credentials = credential;
                     req.PreAuthenticate = true;
                 }
+                req.Accept = Accept;
 
                 return req.GetResponse() as HttpWebResponse;
             }
