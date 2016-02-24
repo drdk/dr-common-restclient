@@ -11,7 +11,7 @@ namespace DR.Common.RESTClient
         public JsonClient(bool useISODates)
         {
             
-            ContentType = "application/x-www-form-urlencoded";
+            ContentType = "application/json";
             Accept = "application/json, text/javascript, */*; q=0.01";
             _baseUrl = "";
             var jsonConverter = new List<JsonConverter>();
