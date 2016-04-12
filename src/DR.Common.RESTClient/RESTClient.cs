@@ -99,21 +99,18 @@ namespace DR.Common.RESTClient
         protected HttpWebResponse SendData(string method, string url, object o, WebHeaderCollection headers)
         {
             byte[] data;
-            string contentType = null;
             if (o != null && (o.GetType().BaseType == typeof(Stream) || o.GetType() == typeof(Stream)))
             {
                 using (var memStream = new MemoryStream())
                 {
                     ((Stream)o).CopyTo(memStream);
                     data = memStream.ToArray();
-                    contentType = "application/octet-stream";
                 }
             }
             else
             {
                 var text = SerializeObject(o);
                 data = (new UTF8Encoding(encoderShouldEmitUTF8Identifier: false)).GetBytes(text);
-                contentType = "application/json";
             }
 
             try
@@ -121,7 +118,7 @@ namespace DR.Common.RESTClient
                 var req = PrepareHttpWebRequest(url, method, headers);
 
                 req.ContentLength = data.Length;
-                req.ContentType = "application/x-www-form-urlencoded";
+                req.ContentType = ContentType;
                 req.Accept = Accept;
 
                 var s = req.GetRequestStream();
@@ -192,7 +189,7 @@ namespace DR.Common.RESTClient
                 _baseUrl = temp.ToString();
             }
         }
-        protected string ContentType { get; set; }
+        public string ContentType { get; set; }
         protected string Accept { get; set; } 
     }
 }

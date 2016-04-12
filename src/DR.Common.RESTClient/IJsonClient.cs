@@ -23,5 +23,6 @@ namespace DR.Common.RESTClient
         string BaseURL { get; set; }
         T DeserializeContent<T>(RESTClientException exception);
         T DeserializeObject<T>(string s);
+        string ContentType { get; set; }
     }
 }

@@ -6,11 +6,9 @@ namespace DR.Common.RESTClient
 {
     public class JsonClient : RESTClient, IJsonClient
     {
-
         public JsonClient() : this(false) { }
         public JsonClient(bool useISODates)
         {
-            
             ContentType = "application/json";
             Accept = "application/json, text/javascript, */*; q=0.01";
             _baseUrl = "";
@@ -20,7 +18,6 @@ namespace DR.Common.RESTClient
                 jsonConverter.Add(new IsoDateTimeConverter());
 
             _jsonConverters = jsonConverter.ToArray();
-
         }
 
         private readonly JsonConverter[] _jsonConverters;
