@@ -2,7 +2,7 @@
 
 namespace DR.Common.RESTClient
 {
-    public interface IRESTClient
+    public interface IXmlClient 
     {
         string Request(string method, string url, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false);
         T Request<T>(string method, string url, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false) where T : class;
