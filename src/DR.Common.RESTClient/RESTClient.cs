@@ -190,6 +190,6 @@ namespace DR.Common.RESTClient
             }
         }
         public string ContentType { get; set; }
-        protected string Accept { get; set; } 
+        public string Accept { get; set; } 
     }
 }
