@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using Newtonsoft.Json;
 
 namespace DR.Common.RESTClient
 {
@@ -58,6 +59,11 @@ namespace DR.Common.RESTClient
                 Content = NO_CONTENT;
                 _message = exception.Message;
             }
+        }
+
+        public T DeserializeContent<T>(params JsonConverter[] jsonConverters)
+        {
+            return JsonConvert.DeserializeObject<T>(Content, jsonConverters);
         }
 
         private static string NO_CONTENT = "[[ unknown (this message is from RESTClientException, not actual content) ]]";

@@ -21,51 +21,36 @@ namespace DR.Common.RESTClient
             string response = Request(method, url, credential, headers, useDefaultCredentials);
             return DeserializeObject<T>(response);
         }
-        public string Request(string method, string url, object o, WebHeaderCollection headers = null)
+        public string Request(string method, string url, object o, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false)
         {
             url = BaseURL.TrimEnd('/') + url;
-            using (var resp = SendData(method, url, o, headers))
+            using (var resp = SendData(method, url, o, credential, headers, useDefaultCredentials))
             {
                 return ReadResponse(resp);
             }
         }
-        public T Request<T>(string method, string url, object o, WebHeaderCollection headers = null) where T : class
+        public T Request<T>(string method, string url, object o, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false) where T : class
         {
-            return DeserializeObject<T>(Request(method, url, o, headers));
+            return DeserializeObject<T>(Request(method, url, o, credential, headers, useDefaultCredentials));
         }
         public string Get(string url, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false)
         {
             return Request("GET", url, credential, headers, useDefaultCredentials);
         }
-        public T Get<T>(string url, NetworkCredential credential = null, WebHeaderCollection headers = null,
-            bool useDefaultCredentials = false) where T : class
+        public T Get<T>(string url, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false) where T : class
         {
             return Request<T>("GET", url, credential, headers, useDefaultCredentials);
         }
-        public string Delete(string url, WebHeaderCollection headers = null)
-        {
-            return Request("DELETE", url, headers: headers);
-        }
-        public T Delete<T>(string url, WebHeaderCollection headers = null) where T : class
-        {
-            return Request<T>("DELETE", url, headers);
-        }
-        public string Post(string url, object o, WebHeaderCollection headers = null)
-        {
-            return Request("POST", url, o, headers);
-        }
-        public T Post<T>(string url, object o, WebHeaderCollection headers = null) where T : class
-        {
-            return Request<T>("POST", url, o, headers);
-        }
-        public string Put(string url, object o, WebHeaderCollection headers = null)
-        {
-            return Request("PUT", url, o, headers);
-        }
-        public T Put<T>(string url, object o, WebHeaderCollection headers = null) where T : class
-        {
-            return Request<T>("PUT", url, o, headers);
-        }
+
+        public string Delete(string url, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false) { return Request("DELETE", url, credential, headers, useDefaultCredentials); }
+        public T Delete<T>(string url, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false) where T : class { return Request<T>("DELETE", url, credential, headers, useDefaultCredentials); }
+
+        public string Post(string url, object o, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false) { return Request("POST", url, o, credential, headers, useDefaultCredentials); }
+        public T Post<T>(string url, object o, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false) where T : class { return Request<T>("POST", url, o, credential, headers, useDefaultCredentials); }
+
+        public string Put(string url, object o, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false) { return Request("PUT", url, o, credential, headers, useDefaultCredentials); }
+        public T Put<T>(string url, object o, NetworkCredential credential = null, WebHeaderCollection headers = null, bool useDefaultCredentials = false) where T : class { return Request<T>("PUT", url, o, credential, headers, useDefaultCredentials); }
+
         public T DeserializeContent<T>(RESTClientException exception)
         {
             return DeserializeObject<T>(exception.Content);
@@ -73,8 +58,8 @@ namespace DR.Common.RESTClient
         public abstract T DeserializeObject<T>(string s);
 
         protected abstract string SerializeObject(object o);
-
-        private HttpWebResponse RequestData(string method, string url, NetworkCredential credential, WebHeaderCollection headers, bool useDefaultCredentials)
+		
+		private HttpWebResponse RequestData(string method, string url, NetworkCredential credential, WebHeaderCollection headers, bool useDefaultCredentials)
         {
             try
             {
@@ -96,7 +81,7 @@ namespace DR.Common.RESTClient
             }
 
         }
-        protected HttpWebResponse SendData(string method, string url, object o, WebHeaderCollection headers)
+        protected HttpWebResponse SendData(string method, string url, object o, NetworkCredential credential, WebHeaderCollection headers)
         {
             byte[] data;
             if (o != null && (o.GetType().BaseType == typeof(Stream) || o.GetType() == typeof(Stream)))
@@ -116,7 +101,8 @@ namespace DR.Common.RESTClient
             try
             {
                 var req = PrepareHttpWebRequest(url, method, headers);
-
+				req.UseDefaultCredentials = useDefaultCredentials;
+                if (credential != null) req.Credentials = credential;
                 req.ContentLength = data.Length;
                 req.ContentType = ContentType;
                 req.Accept = Accept;
