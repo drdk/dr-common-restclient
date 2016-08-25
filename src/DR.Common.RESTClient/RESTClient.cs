@@ -81,7 +81,7 @@ namespace DR.Common.RESTClient
             }
 
         }
-        protected HttpWebResponse SendData(string method, string url, object o, NetworkCredential credential, WebHeaderCollection headers)
+        protected HttpWebResponse SendData(string method, string url, object o, NetworkCredential credential, WebHeaderCollection headers, bool useDefaultCredentials = false)
         {
             byte[] data;
             if (o != null && (o.GetType().BaseType == typeof(Stream) || o.GetType() == typeof(Stream)))
