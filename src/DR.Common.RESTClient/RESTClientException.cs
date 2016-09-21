@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Net;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace DR.Common.RESTClient
 {
+    [Serializable]
     public class RESTClientException: Exception
     {
         public virtual HttpStatusCode? StatusCode { get; private set; }
@@ -42,24 +45,38 @@ namespace DR.Common.RESTClient
                 }
                 catch
                 {
-                    Content = NO_CONTENT;
+                    Content = NoContent;
                 }
 
                 StatusCode = response.StatusCode;
                 StatusDescription = response.StatusDescription;
-                _message = (!string.IsNullOrEmpty(StatusDescription) && !string.IsNullOrEmpty(Uri) ?
-                    StatusDescription + " Uri : \"" + Uri + "\". Inner message : \"" + exception.Message + "\"" :
+                _message = (!string.IsNullOrEmpty(response.StatusDescription) && !string.IsNullOrEmpty(Uri) ?
+                    response.StatusDescription + " Uri : \"" + Uri + "\". Inner message : \"" + exception.Message + "\"" :
                     exception.Message);
             }
             else
             {
                 StatusCode = null;
                 StatusDescription = null;
-                Content = NO_CONTENT;
+                Content = NoContent;
                 _message = exception.Message;
             }
         }
 
-        private static string NO_CONTENT = "[[ unknown (this message is from RESTClientException, not actual content) ]]";
+        private const string NoContent = "[[ unknown (this message is from RESTClientException, not actual content) ]]";
+
+        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if (info == null)
+                throw new ArgumentNullException(nameof(info));
+
+            base.GetObjectData(info,context);
+
+            info.AddValue(nameof(Content), Content);
+            info.AddValue(nameof(StatusCode), StatusCode);
+            info.AddValue(nameof(StatusDescription), StatusDescription);
+            info.AddValue(nameof(Uri), Uri);
+        }
     }
 }
