@@ -22,11 +22,11 @@ namespace DR.Common.RESTClient
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
-                throw new ArgumentNullException(nameof(info));
+                throw new ArgumentNullException("info");
 
             base.GetObjectData(info, context);
 
-            info.AddValue(nameof(Json), Json);
+            info.AddValue("Json", Json);
         }
     }
 }

@@ -75,14 +75,14 @@ namespace DR.Common.RESTClient
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
-                throw new ArgumentNullException(nameof(info));
+                throw new ArgumentNullException("info");
 
             base.GetObjectData(info,context);
 
-            info.AddValue(nameof(Content), Content);
-            info.AddValue(nameof(StatusCode), StatusCode);
-            info.AddValue(nameof(StatusDescription), StatusDescription);
-            info.AddValue(nameof(Uri), Uri);
+            info.AddValue("Content", Content);
+            info.AddValue("StatusCode", StatusCode);
+            info.AddValue("StatusDescription", StatusDescription);
+            info.AddValue("Uri", Uri);
         }
     }
 }
