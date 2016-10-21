@@ -17,6 +17,8 @@ namespace DR.Common.RESTClient
         private readonly string _message;
         public override string Message { get { return _message; } }
 
+        private RESTClientException(SerializationInfo info, StreamingContext context) { } // need for unit test mocking ?
+
         public RESTClientException() { }
 
         public RESTClientException(string url=null, HttpStatusCode? statusCode = null)
