@@ -62,3 +62,4 @@ build-output/
 src/DR.MediaUniverse.Integrations.MasterEpg/XsdGeneratedClasses.cs
 
 *.dotCover
+*/.vs/

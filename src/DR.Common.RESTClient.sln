@@ -1,17 +1,9 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2020
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DR.Common.RESTClient", "DR.Common.RESTClient\DR.Common.RESTClient.csproj", "{DFE5BDF4-097E-4641-AA6B-69E3FD5FBFDF}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalReferences", "ExternalReferences", "{3000237A-1E79-4D84-A5E2-D7449A1C1FE4}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assemblies", "Assemblies", "{D7C440D6-AD87-40BA-8ADF-9B2BF6DFC172}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Newtonsoft.Json", "Newtonsoft.Json", "{0BABD308-3FCB-467C-9651-1388549E54D9}"
-	ProjectSection(SolutionItems) = preProject
-		ExternalReferences\Assemblies\Newtonsoft.Json\Newtonsoft.Json.dll = ExternalReferences\Assemblies\Newtonsoft.Json\Newtonsoft.Json.dll
-		ExternalReferences\Assemblies\Newtonsoft.Json\Newtonsoft.Json.xml = ExternalReferences\Assemblies\Newtonsoft.Json\Newtonsoft.Json.xml
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,8 +19,7 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{D7C440D6-AD87-40BA-8ADF-9B2BF6DFC172} = {3000237A-1E79-4D84-A5E2-D7449A1C1FE4}
-		{0BABD308-3FCB-467C-9651-1388549E54D9} = {D7C440D6-AD87-40BA-8ADF-9B2BF6DFC172}
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E2655739-3AA5-4466-8BAA-A359C435BB41}
 	EndGlobalSection
 EndGlobal
