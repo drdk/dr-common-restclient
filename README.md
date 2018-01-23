@@ -1,4 +1,5 @@
-dr-common-restclient
+DR.Common.RESTClient
 ====================
+[![NuGet version (DR.Common.RESTClient)](https://img.shields.io/nuget/v/DR.Common.RESTClient.svg?style=flat-square)](https://www.nuget.org/packages/DR.Common.RESTClient/)
 
 A generic GET/PUT/POST/DELETE REST client.
