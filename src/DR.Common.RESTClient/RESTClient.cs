@@ -71,7 +71,13 @@ namespace DR.Common.RESTClient
                     req.Credentials = credential;
                     req.PreAuthenticate = true;
                 }
+
                 req.Accept = Accept;
+
+                if (Timeout != null && Timeout.Value > TimeSpan.Zero)
+                { 
+                    req.Timeout = (int)Timeout.Value.TotalMilliseconds;
+                }
 
                 return req.GetResponse() as HttpWebResponse;
             }
@@ -105,7 +111,13 @@ namespace DR.Common.RESTClient
                 if (credential != null) req.Credentials = credential;
                 req.ContentLength = data.Length;
                 req.ContentType = ContentType;
+
                 req.Accept = Accept;
+
+                if (Timeout != null && Timeout.Value > TimeSpan.Zero)
+                {
+                    req.Timeout = (int)Timeout.Value.TotalMilliseconds;
+                }
 
                 var s = req.GetRequestStream();
                 s.Write(data, 0, data.Length);
@@ -176,6 +188,7 @@ namespace DR.Common.RESTClient
             }
         }
         public string ContentType { get; set; }
-        public string Accept { get; set; } 
+        public string Accept { get; set; }
+        public TimeSpan? Timeout { get; set; }
     }
 }

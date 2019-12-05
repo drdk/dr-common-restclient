@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 
 namespace DR.Common.RESTClient
 {
@@ -25,5 +26,6 @@ namespace DR.Common.RESTClient
         T DeserializeObject<T>(string s);
         string ContentType { get; set; }
         string Accept { get; set; }
+        TimeSpan? Timeout { get; set; }
     }
 }
