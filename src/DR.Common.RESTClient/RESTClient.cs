@@ -90,11 +90,11 @@ namespace DR.Common.RESTClient
         protected HttpWebResponse SendData(string method, string url, object o, NetworkCredential credential, WebHeaderCollection headers, bool useDefaultCredentials = false)
         {
             byte[] data;
-            if (o != null && (o.GetType().BaseType == typeof(Stream) || o.GetType() == typeof(Stream)))
+            if (o != null && (o is Stream stream))
             {
                 using (var memStream = new MemoryStream())
                 {
-                    ((Stream)o).CopyTo(memStream);
+                    stream.CopyTo(memStream);
                     data = memStream.ToArray();
                 }
             }
