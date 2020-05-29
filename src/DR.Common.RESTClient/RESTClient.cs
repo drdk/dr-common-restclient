@@ -87,29 +87,13 @@ namespace DR.Common.RESTClient
             }
 
         }
-        protected HttpWebResponse SendData(string method, string url, object o, NetworkCredential credential, WebHeaderCollection headers, bool useDefaultCredentials = false)
+        protected HttpWebResponse SendData(string method, string url, object data, NetworkCredential credential, WebHeaderCollection headers, bool useDefaultCredentials = false)
         {
-            byte[] data;
-            if (o != null && (o.GetType().BaseType == typeof(Stream) || o.GetType() == typeof(Stream)))
-            {
-                using (var memStream = new MemoryStream())
-                {
-                    ((Stream)o).CopyTo(memStream);
-                    data = memStream.ToArray();
-                }
-            }
-            else
-            {
-                var text = SerializeObject(o);
-                data = (new UTF8Encoding(encoderShouldEmitUTF8Identifier: false)).GetBytes(text);
-            }
-
             try
             {
                 var req = PrepareHttpWebRequest(url, method, headers);
 				req.UseDefaultCredentials = useDefaultCredentials;
                 if (credential != null) req.Credentials = credential;
-                req.ContentLength = data.Length;
                 req.ContentType = ContentType;
 
                 req.Accept = Accept;
@@ -119,9 +103,41 @@ namespace DR.Common.RESTClient
                     req.Timeout = (int)Timeout.Value.TotalMilliseconds;
                 }
 
-                var s = req.GetRequestStream();
-                s.Write(data, 0, data.Length);
-                s.Close();
+                if (data != null && (data is Stream stream))
+                {
+                    try
+                    {
+                        req.ContentLength = stream.Length;
+                        using (var rs = req.GetRequestStream())
+                        {
+                            stream.CopyTo(rs);
+                        }
+                    }
+                    catch (NotSupportedException)
+                    {
+                        using (var memStream = new MemoryStream())
+                        {
+                            stream.CopyTo(memStream);
+
+                            req.ContentLength = memStream.Length;
+                            using (var rs = req.GetRequestStream())
+                            {
+                                memStream.CopyTo(rs);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    var text = SerializeObject(data);
+                    byte[] serializedData = (new UTF8Encoding(encoderShouldEmitUTF8Identifier: false)).GetBytes(text);
+
+                    req.ContentLength = serializedData.Length;
+                    using (var rs = req.GetRequestStream())
+                    {
+                        rs.Write(serializedData, 0, serializedData.Length);
+                    }
+                }
 
                 return req.GetResponse() as HttpWebResponse;
             }
